@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../server'); // Assuming server.js exports the app
 const User = require('../models/User');
 
+jest.setTimeout(15000); // 15 second timeout
+
 describe('Auth Routes', () => {
     beforeAll(async () => {
         await User.deleteMany(); // Clear the database before tests

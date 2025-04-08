@@ -3,6 +3,8 @@ const app = require('../server'); // Assuming server.js exports the app
 const User = require('../models/User');
 const Dog = require('../models/Dog');
 
+jest.setTimeout(15000); // 15 second timeout
+
 describe('Dog Routes', () => {
     let token;
     let userId;

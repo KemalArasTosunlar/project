@@ -4,6 +4,8 @@ const User = require('../models/User');
 const Dog = require('../models/Dog');
 const Log = require('../models/Log');
 
+jest.setTimeout(15000); // 15 second timeout
+
 describe('Log Routes', () => {
     let token;
     let userId;

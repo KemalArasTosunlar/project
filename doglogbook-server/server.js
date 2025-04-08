@@ -16,7 +16,15 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const mongoUri = process.env.NODE_ENV === 'test' 
+    ? 'mongodb://localhost:27017/doglogbook-test'
+    : process.env.MONGODB_URI;
+
+mongoose.connect(mongoUri, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000
+})
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 

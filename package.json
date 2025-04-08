@@ -3,18 +3,19 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "private": true,
-"scripts": {
+  "scripts": {
     "dev": "set EXPO_NO_TELEMETRY=1&& expo start",
     "build:web": "expo export --platform web",
     "lint": "expo lint",
-    "test": "jest"  // Add this line to run tests with Jest
-},
+    "test": "set NODE_ENV=test&& jest --setupFiles dotenv/config"
+  },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo/vector-icons": "^14.0.2",
     "@lucide/lab": "^0.1.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "bcrypt": "^5.1.1",
     "expo": "52.0.33",
     "expo-blur": "^14.0.3",
     "expo-camera": "^16.0.18",
@@ -30,8 +31,11 @@
     "expo-symbols": "^0.2.2",
     "expo-system-ui": "^4.0.7",
     "expo-web-browser": "^14.0.2",
+    "express": "^5.1.0",
     "firebase": "^10.8.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react-native": "^0.475.0",
+    "mongoose": "^8.13.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.6",
@@ -44,12 +48,35 @@
     "react-native-web": "^0.19.13",
     "react-native-webview": "13.12.5"
   },
+  "jest": {
+    "preset": "react-native",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-native/js-polyfills)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ],
+    "setupFiles": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js",
+      "./node_modules/@testing-library/react-native/jest-preset/index.js"
+    ],
+    "testEnvironment": "node",
+    "testEnvironmentOptions": {},
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "./jest-transformer.js"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-flow-strip-types": "^7.26.5",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.27.0",
+    "@testing-library/react-native": "^12.1.2",
     "@types/expo": "^32.0.13",
     "@types/react": "~18.3.12",
     "@types/react-native": "^0.72.8",
-    "typescript": "^5.3.3",
-    "jest": "^27.0.0" // Ensure jest is included in devDependencies
+    "dotenv": "^16.4.7",
+    "jest": "^29.7.0",
+    "react-test-renderer": "^18.2.0",
+    "supertest": "^7.1.0",
+    "typescript": "^5.3.3"
   }
 }
