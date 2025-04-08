@@ -6,11 +6,13 @@ module.exports = {
       filename,
       presets: [
         '@babel/preset-env',
-        '@babel/preset-react',
-        '@babel/preset-typescript'
+        '@babel/preset-react', 
+        '@babel/preset-typescript',
+        '@babel/preset-flow'
       ],
       plugins: [
-        '@babel/plugin-transform-flow-strip-types'
+        '@babel/plugin-transform-flow-strip-types',
+        '@babel/plugin-transform-modules-commonjs'
       ]
     });
     

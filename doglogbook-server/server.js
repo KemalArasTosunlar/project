@@ -1,42 +1,39 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const authRoutes = require('./routes/authRoutes');
-const dogRoutes = require('./routes/dogRoutes');
-const logRoutes = require('./routes/logRoutes');
-const reminderRoutes = require('./routes/reminderRoutes');
-const communityRoutes = require('./routes/communityRoutes');
-const aiRoutes = require('./routes/aiRoutes');
-require('dotenv').config();
+const cors = require('cors');
+const dotenv = require('dotenv');
 
+dotenv.config();
+
+// Initialize Express
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
-// Database connection
-const mongoUri = process.env.NODE_ENV === 'test' 
-    ? 'mongodb://localhost:27017/doglogbook-test'
-    : process.env.MONGODB_URI;
-
-mongoose.connect(mongoUri, { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000
-})
+// MongoDB connection will be handled by test setup
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000
+    })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
+}
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/dogs', dogRoutes);
-app.use('/api/logs', logRoutes);
-app.use('/api/reminders', reminderRoutes);
-app.use('/api/community', communityRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/dogs', require('./routes/dogRoutes'));
+app.use('/api/logs', require('./routes/logRoutes'));
+app.use('/api/community', require('./routes/communityRoutes'));
+app.use('/api/reminders', require('./routes/reminderRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => 
+  console.log(`Server is running on port ${PORT}`)
+);
+
+module.exports = server;

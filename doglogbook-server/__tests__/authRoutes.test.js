@@ -1,29 +1,61 @@
 const request = require('supertest');
-const app = require('../server'); // Assuming server.js exports the app
+const { startMongoMemoryServer, stopMongoMemoryServer } = require('../../testHelpers/mongoMemoryServerSetup');
+const app = require('../server');
 const User = require('../models/User');
 
-jest.setTimeout(15000); // 15 second timeout
+beforeAll(async () => {
+  await startMongoMemoryServer();
+}, 10000); // 10 second timeout
+
+afterAll(async () => {
+  await stopMongoMemoryServer();
+}, 10000);
+
+afterEach(async () => {
+  await User.deleteMany({});
+}, 10000);
 
 describe('Auth Routes', () => {
-    beforeAll(async () => {
-        await User.deleteMany(); // Clear the database before tests
-    });
+  // Test cases will go here
+  it('should register a new user', async () => {
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123'
+      });
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toHaveProperty('message');
+    expect(res.body.message).toEqual('User registered successfully');
+  });
 
-    it('should register a new user', async () => {
-        const response = await request(app)
-            .post('/api/auth/register')
-            .send({ email: 'test@example.com', password: 'password123' });
-        
-        expect(response.status).toBe(201);
-        expect(response.body.message).toBe('User registered successfully');
-    });
+  it('should login a user', async () => {
+    // First register a user
+    await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123'
+      });
 
-    it('should login a user', async () => {
-        const response = await request(app)
-            .post('/api/auth/login')
-            .send({ email: 'test@example.com', password: 'password123' });
-        
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('token');
-    });
+    // Then test login
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'password123'
+      });
+      
+    console.log('Login response:', loginRes.body); // Debug logging
+    
+    if (loginRes.statusCode !== 200) {
+      console.error('Login error:', loginRes.body.error || loginRes.body);
+    }
+    
+    expect(loginRes.statusCode).toEqual(200);
+    expect(loginRes.body).toHaveProperty('token');
+    expect(typeof loginRes.body.token).toBe('string');
+  });
 });
